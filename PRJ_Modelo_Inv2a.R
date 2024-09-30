@@ -18,18 +18,32 @@
 rm(list=ls(all=TRUE))                                   # Limpa memória
 gc()
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Lê pacote forestinventory
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-if(!require(tidyverse))
-  install.packages(tidyverse)
-library(tidyverse)
-
 # Leitura da versão mais atual do pacote rio 
 #           para importação de planilhas Excel
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if (!require("remotes")){install.packages("remotes")}
 if (!require(rio))      {remotes::install_github("gesistsa/rio")}
+library(rio)
+
+# Define local e nome da planilha para leitura dos dados
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+prjNome  <- 'PRJ_Modelo'
+dirNome  <- paste0('C:/LiDAR/', prjNome, '/DADOS/')
+arqNome  <- paste0(dirNome, prjNome, '.xlsx')
+arqNome2 <- paste0(dirNome, 'PRJ_ATV_Modelo_metrics.xlsx')
+
+
+talhoes  <- import(arqNome, which = "talhoes")
+grid     <- import(arqNome2)
+
+# Cria coluna para cell weight
+cellweight <- grid$areacell/400
+grid <- cbind(grid, cellweight)
+
+
+# *********************************************************************
+# >>>>>>>>>>>>>>>>>>  Falta só agregar as métricas LiDAR no grid !!!!!!
+# *********************************************************************
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Lê pacote forestinventory
@@ -37,58 +51,6 @@ if (!require(rio))      {remotes::install_github("gesistsa/rio")}
 if(!require(forestinventory))  # Para melhor manipulação de dados e funções
   install.packages("forestinventory")
 library(forestinventory)
-
-# Define local e nome da planilha para leitura dos dados
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-prjNome  <- "PRJ_Modelo"
-dirNome  <- paste0('C:/LiDAR/', prjNome, '/DADOS/')
-arqNome  <- paste0(dirNome, prjNome, '_metrics.csv')
-grid     <- import(arqNome)
-
-head(grid)
-
-X <- tibble(grid) %>% select(fase, areacell, MHDOM, idade, zmean, 
-                                 zq45, zq75, zq95, VTCC)
-
-head(X)
-
-X$boundaryweights <- X$areacell / 400
-X <- as.data.frame(X) # Tibble não é uma função nativa do R, é uma função chamada pelo tidyverse. Dessa forma, o formato da tabela que é gerada não é reconhecido pela função twophase() do package forestinventory. O forestinventory reconhece data frames, já que são nativos do R.
-
-# Análise de regressão linear para verificar a correlação
-# entre o p95 e a idade do inventário com o VTCC
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-m <- lm(VTCC ~ zq95 + idade, data = X)    # Análise de Regressão Linear
-summary(m)                          # Mostra os resultados da regressão
-VTCCparcelas <- X$VTCC[!is.na(X$VTCC)] # VTCCparcelas recebe os valores não nulos de VTCC contidos em X, ou seja, recebe os valores de VTCC das parcelas de campo
-plot(VTCCparcelas, predict(m))              # Gráfico de observado vs predito
-abline(0,1)
-
-# Dupla Amostragem Casual
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-reg2p_nex <- twophase(formula = VTCC ~ zq95 + idade, # formula relaciona os valores de VTCC com zq95 e IDINV (análise de regressão)
-                      data = X, #  Base de dados utilizada
-                      boundary_weights = "boundaryweights",
-                      phase_id = list(phase.col = "fase", terrgrid.id = 2)) # phase_id recebe uma lista em que a coluna a ser analisada é a "Inventario" e o identificador da segunda fase é 2
-summary(reg2p_nex) # Dá os resultados da Dupla Amostragem
-confint(reg2p_nex) # Estatística de confiança
-
-# Dupla Amostragem Estratificada
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-reg2p_nex_est = twophase(
-  formula = VTCC ~ zq95 + idade,
-  data = X,
-  phase_id =list(phase.col = "fase", terrgrid.id = 2),
-  boundary_weights = "boundaryweights",
-  small_area = list(sa.col = "idade", areas = c("3.7", "5.2"), unbiased = FALSE)) 
-summary(reg2p_nex_est)
-confint(reg2p_nex_est)
-
-# sae.table<- estTable(est.list = list(reg2p_nex, reg2p_nex_est), add.ci=TRUE,
-#                      vartypes = c("g_variance"))
-# 
-# sae.table.df<- as.data.frame(sae.table)
-
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Amostragem simples em fase única - parâmetros do pacote
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -106,21 +68,18 @@ confint(reg2p_nex_est)
 #         cluster  = nome da coluna, se houver cluster sampling)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Amostragem Dupla Simples (ADS)  substituir grisons por "completo"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ----
+AreaTotal <- talhoes$AREA %>% sum             # Área total inventariada
+ADS <- twophase(formula  = VTCC ~ zq75 + idade,
+                data     = grid,
+                phase_id = list(phase.col = "fase", 
+                                terrgrid.id = 2),
+                boundary_weights = "cellweight")
 
-# AreaTotal <- talhoes$AREA %>% sum             # Área total inventariada
-# ADS <- twophase(formula  = tvol ~ mean + stddev + max + q75,
-#                 data     = grid,
-#                 phase_id = list(phase.col = "fase", 
-#                                 terrgrid.id = 2),
-#                 boundary_weights = "cellweight")
-# 
-# summary(ADS)
-# confint(ADS)
+summary(ADS)
+confint(ADS)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
