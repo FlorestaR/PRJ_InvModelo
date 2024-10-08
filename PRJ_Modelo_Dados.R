@@ -4,7 +4,7 @@
 # Autor: Luiz Carlos Estraviz Rodriguez
 #        Otávio Magalhães Silva Souza
 #        Departamento de Ciências Florestais
-#        ESALQ/USP - 30/Set/2024
+#        ESALQ/USP - 08/Out/2024
 #
 #   - download dos dados mantidos em um repositório github público
 #      - shape files dos talhões e das parcelas de inventário
@@ -70,8 +70,8 @@ parcelasSemGeo <- tibble(sf::st_drop_geometry(parcelasComGeo)) # s/geom
 parcelas <- parcelasSemGeo %>% arrange(parcela)
 parcelas$areapar <- round(parcelas$areapar, 0)
 n        <- count(parcelas)
-fase     <- rep(1:1, n)
-parcelas <- cbind(as.numeric(fase), parcelas)
+fase     <- as.numeric(rep(1:1, n))
+parcelas <- cbind(fase, parcelas)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Cria coluna idade na tabela talhoes, extraída da tabela parcelas
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

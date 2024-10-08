@@ -4,7 +4,7 @@
 # Autor: Luiz Carlos Estraviz Rodriguez
 #        Otávio Magalhães Silva Souza
 #        Departamento de Ciências Florestais
-#        ESALQ/USP - 30/Set/2024
+#        ESALQ/USP - 08/Out/2024
 #
 #   - Estimativas de inventário com amostragem de uma fase
 #        Casual Simples (ACS)                             
@@ -28,7 +28,7 @@ library(rio)
 # Define local e nome da planilha para leitura dos dados
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 prjNome <- 'PRJ_InvModelo'
-dirNome <- paste0('C:/GitRepo/', prjNome, '/DADOS/')
+dirNome <- paste0('C:/GitHub/', prjNome, '/DADOS/')
 arqNome  <- paste0(dirNome, prjNome, '.xlsx')
 talhoes  <- import(arqNome, which = "talhoes")
 parcelas <- import(arqNome, which = "parcelas")
