@@ -39,6 +39,20 @@ parcelas <- import(arqNome, which = "parcelas")
 if(!require(forestinventory))  # Para melhor manipulação de dados e funções
   install.packages("forestinventory")
 library(forestinventory)
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Lê pacote tidyverse
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+if(!require(tidyverse))  # Para melhor manipulação de dados e funções
+  install.packages("tidyverse")
+library(tidyverse)
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Lê pacote kableExtra
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+if(!require(kableExtra))  # Para melhor manipulação de dados e funções
+  install.packages("kableExtra")
+library(kableExtra)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Amostragem simples em fase única - parâmetros do pacote
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

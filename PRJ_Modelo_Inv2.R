@@ -91,7 +91,7 @@ reg2p_nex <- twophase(formula = VTCC ~ zq95 + idade, # formula relaciona os valo
                       phase_id = list(phase.col = "fase", terrgrid.id = 2)) # phase_id recebe uma lista em que a coluna a ser analisada é a "Inventario" e o identificador da segunda fase é 2
 summary(reg2p_nex) # Dá os resultados da Dupla Amostragem
 confint(reg2p_nex) # Estatística de confiança
-
+talhoes
 # Dupla Amostragem Estratificada
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 reg2p_nex_est = twophase(
