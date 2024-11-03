@@ -4,7 +4,7 @@
 # Autor: Luiz Carlos Estraviz Rodriguez
 #        Otávio Magalhães Silva Souza
 #        Departamento de Ciências Florestais
-#        ESALQ/USP - 08/Out/2024
+#        ESALQ/USP - 03/Nov/2024
 #
 #   - Estimativas de inventário com amostragem em duas fases
 #        Amostragem Dupla Simples (ADS)                             
@@ -34,7 +34,7 @@ if (!require(rio))      {remotes::install_github("gesistsa/rio")}
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Lê pacote forestinventory
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-if(!require(forestinventory))  # Para melhor manipulação de dados e funções
+if(!require(forestinventory))  
   install.packages("forestinventory")
 library(forestinventory)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -51,6 +51,7 @@ library(forestinventory)
 #                        sa.col = nome coluna de estratificação,
 #                        areas  = vetor c("", "", "") de estratos), ubiased = TRUE para viés e FALSE para sem viés,
 #         cluster  = nome da coluna, se houver cluster sampling)
+#
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Define local e nome da planilha para leitura dos dados
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -60,6 +61,7 @@ arqNome_metricas  <- paste0(dirNome, prjNome, '_Metricas.xlsx')
 arqNome_grid <- paste0(dirNome, prjNome, '.xlsx')
 metricas     <- import(arqNome_metricas)
 grid     <- import(arqNome_grid, which = "grid")
+talhoes <- import(arqNome_grid, which = "talhoes")
 
 # Mescla as métricas LiDAR com o Grid através da coluna "gridcell". Células do
 # grid cuja área é menor do que 1m² são descartadas.
@@ -72,7 +74,10 @@ X <- tibble(grid_laz) %>% select(fase, areacell, idade, zmean,
 
 X$fase <- as.numeric(X$fase) # Converte a coluna "fase" para o tipo numérico
 X$boundaryweights <- X$areacell / 400 # Cria a coluna "boundaryweights"
-X <- as.data.frame(X) # Tibble não é uma função nativa do R, é uma função chamada pelo tidyverse. Dessa forma, o formato da tabela que é gerada não é reconhecido pela função twophase() do package forestinventory. O forestinventory reconhece data frames, já que são nativos do R.
+X <- as.data.frame(X) # Tibble não é uma função nativa do R, é uma função chamada pelo tidyverse. 
+                      # Dessa forma, o formato da tabela que se gera não é reconhecido pela função 
+                      # twophase() do package forestinventory. O forestinventory reconhece data frames, 
+                      # já que são nativos do R.
 
 # Análise de regressão linear para verificar a correlação
 # entre o p95 e a idade do inventário com o VTCC
@@ -102,4 +107,3 @@ reg2p_nex_est = twophase(
   small_area = list(sa.col = "idade", areas = c("3.7", "5.2"), unbiased = FALSE)) 
 summary(reg2p_nex_est)
 confint(reg2p_nex_est)
-# ----

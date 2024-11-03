@@ -4,7 +4,7 @@
 # Autor: Luiz Carlos Estraviz Rodriguez
 #        Otávio Magalhães Silva Souza
 #        Departamento de Ciências Florestais
-#        ESALQ/USP - 08/Out/2024
+#        ESALQ/USP - 03/Nov/2024
 #
 #   - download dos dados mantidos em um repositório github público
 #      - shape files dos talhões e das parcelas de inventário

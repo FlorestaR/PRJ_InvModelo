@@ -4,7 +4,7 @@
 # Autor: Luiz Carlos Estraviz Rodriguez
 #        Otávio Magalhães Silva Souza
 #        Departamento de Ciências Florestais
-#        ESALQ/USP - 08/Out/2024
+#        ESALQ/USP - 03/Nov/2024
 #
 #   - Estimativas de inventário com amostragem de uma fase
 #        Casual Simples (ACS)                             
@@ -188,4 +188,8 @@ quadroACE %>%
   footnote(general       = NotaDeRodape,
            general_title = "Intensidade amostral",
            footnote_as_chunk = T)
-# ----
+
+
+
+
+
