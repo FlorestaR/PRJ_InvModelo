@@ -107,3 +107,12 @@ reg2p_nex_est = twophase(
   small_area = list(sa.col = "idade", areas = c("3.7", "5.2"), unbiased = FALSE)) 
 summary(reg2p_nex_est)
 confint(reg2p_nex_est)
+
+y = c(2, 4, 6, 8, 10)
+x = c(1, 2, 3, 4, 5)
+
+y <- c(2, 4, 6, 8, 10)
+x <- c(1, 2, 3, 4, 5)
+
+plot(x, y, xlim = c(0, max(x)), ylim = c(0, max(y)))
+abline(0,2)
